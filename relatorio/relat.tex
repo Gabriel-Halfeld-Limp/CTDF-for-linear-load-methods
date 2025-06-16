@@ -1,0 +1,182 @@
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{hyperref}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+
+\begin{document}
+
+\title{Implementação e Análise dos Fatores de Distribuição de Corrente (CTDF) para Métodos Lineares de Fluxo de Potência}
+
+\author{Gabriel H. Limp, Giovani Junqueira
+\thanks{Gabriel H. Limp e Giovani Junqueira são alunos de mestrado em Engenharia Elétrica.}
+\thanks{Manuscript submitted June 2025.}
+}
+
+\maketitle
+
+\begin{abstract}
+Este artigo apresenta a fundamentação matemática e a implementação computacional dos Fatores de Distribuição de Corrente (CTDF) para métodos lineares de fluxo de potência, conforme proposto por Sauer (1981). São detalhadas as formulações dos CTDFs ground, slack-referenced e z-tie, bem como sua implementação em Python. Resultados experimentais são apresentados para sistemas IEEE 14 barras, Sauer 6 e Sauer 11, comparando os métodos AC, DC e CTDF.
+\end{abstract}
+
+\begin{IEEEkeywords}
+CTDF, Fluxo de Potência, IEEE 14 barras, Python, Sistemas Elétricos, Análise de Redes, Sauer.
+\end{IEEEkeywords}
+
+\section{Introdução}
+A análise de fluxo de potência é fundamental para o planejamento e operação de sistemas elétricos. Métodos lineares, como o DC Load Flow, são amplamente utilizados devido à sua simplicidade e eficiência. Os Fatores de Distribuição de Corrente (CTDFs) permitem calcular rapidamente o impacto de perturbações de carga ou geração sobre os fluxos de linha, sem a necessidade de resolver novamente todo o sistema. Este trabalho apresenta a fundamentação matemática dos CTDFs, conforme Sauer~\cite{Sauer1981}, e sua implementação computacional em Python.
+
+\section{Fundamentação Matemática dos CTDFs}
+
+\subsection{Modelo Linearizado de Fluxo de Potência (DC Load Flow)}
+Considerando um sistema de potência com $n$ barras e $m$ linhas, o fluxo de potência ativa entre as barras $i$ e $j$ é dado por:
+\begin{equation}
+    P_{ij} = \frac{1}{x_{ij}} (\theta_i - \theta_j)
+\end{equation}
+onde $x_{ij}$ é a reatância da linha $(i,j)$ e $\theta_i$ é o ângulo da barra $i$.
+
+A equação nodal para todas as barras (exceto a slack) pode ser escrita como:
+\begin{equation}
+    \mathbf{P} = \mathbf{B} \boldsymbol{\theta}
+\end{equation}
+onde $\mathbf{P}$ é o vetor de injeções de potência, $\mathbf{B}$ é a matriz de susceptância reduzida, e $\boldsymbol{\theta}$ é o vetor de ângulos.
+
+\subsection{CTDFs: Definição Geral}
+O CTDF para uma linha $k$ e barra $m$ é definido como:
+\begin{equation}
+    CTDF_{k,m} = \frac{\partial f_k}{\partial P_m}
+\end{equation}
+onde $f_k$ é o fluxo na linha $k$ e $P_m$ é a potência injetada na barra $m$.
+
+\subsection{CTDF Ground-Referenced}
+No caso \textbf{ground-referenced}, considera-se que todas as barras estão referenciadas a um "terra" comum (sem slack explícito). O fluxo na linha $k$ entre barras $i$ e $j$ é:
+\begin{equation}
+    f_k = \frac{1}{x_k} (\theta_i - \theta_j)
+\end{equation}
+Com $\boldsymbol{\theta} = \mathbf{B}^{-1} \mathbf{P}$, temos:
+\begin{equation}
+    CTDF^{(g)}_{k,m} = \frac{1}{x_k} \left( e_i^T \mathbf{B}^{-1} e_m - e_j^T \mathbf{B}^{-1} e_m \right)
+\end{equation}
+onde $e_i$ é o vetor canônico com 1 na posição $i$.
+
+\subsection{CTDF Slack-Referenced}
+No caso \textbf{slack-referenced}, uma barra de referência (slack) é explicitamente definida. A matriz $\mathbf{B}$ é reduzida, removendo a linha e coluna da slack. O CTDF é dado por:
+\begin{equation}
+    CTDF^{(s)}_{k,m} = \frac{1}{x_k} \left( e_i^T \mathbf{B}_{red}^{-1} e_m - e_j^T \mathbf{B}_{red}^{-1} e_m \right)
+\end{equation}
+onde $m$ e $i,j$ não incluem a slack.
+
+\subsection{CTDF Z-Tie Referenced}
+No caso \textbf{z-tie referenced}, considera-se uma ligação fictícia de impedância $z_{tie}$ entre a slack e o "terra". A matriz admitância é modificada para incluir $z_{tie}$, e o CTDF é:
+\begin{equation}
+    CTDF^{(z)}_{k,m} = \frac{1}{x_k} \left( e_i^T \mathbf{B}_{tie}^{-1} e_m - e_j^T \mathbf{B}_{tie}^{-1} e_m \right)
+\end{equation}
+onde $\mathbf{B}_{tie}$ é a matriz $\mathbf{B}$ modificada.
+
+\subsection{Resumo Matricial}
+De forma compacta, para todas as linhas e barras:
+\begin{equation}
+    \mathbf{CTDF} = \mathbf{A} \mathbf{B}^{-1}
+\end{equation}
+onde $\mathbf{A}$ é a matriz de incidência das linhas.
+
+\section{Implementação em Python}
+
+A implementação foi realizada de forma modular, utilizando as bibliotecas \texttt{numpy}, \texttt{matplotlib} e \texttt{pandas}. O código está dividido em:
+
+\begin{itemize}
+    \item \textbf{Modelos Elétricos}: Definição de classes para barras, linhas, cargas e geradores.
+    \item \textbf{Sistemas}: Instanciação dos sistemas IEEE 14, Sauer 6 e Sauer 11.
+    \item \textbf{Fluxo de Potência}: Métodos AC e DC.
+    \item \textbf{CTDFs}: Funções para cálculo dos três tipos de CTDF.
+    \item \textbf{Notebook principal}: Execução dos experimentos e geração dos gráficos.
+\end{itemize}
+
+\subsection{Exemplo de Cálculo do CTDF Ground em Python}
+\begin{verbatim}
+B = network.get_B()
+A = network.incidence_matrix()
+CTDF_ground = np.dot(A, np.linalg.inv(B))
+\end{verbatim}
+
+\subsection{Execução dos Testes}
+Os experimentos foram realizados no notebook \texttt{main.ipynb}, com os seguintes passos:
+\begin{enumerate}
+    \item Comparação dos ângulos de barra (AC vs DC).
+    \item Comparação dos fluxos de linha (DC vs CTDFs).
+    \item Análise de perturbação de carga (+10\%) e impacto nos fluxos.
+\end{enumerate}
+
+\section{Como Executar o Projeto}
+
+\begin{enumerate}
+    \item Clone o repositório:
+    \begin{verbatim}
+    git clone <URL_DO_REPOSITORIO>
+    cd CTDF-for-linear-load-methods
+    \end{verbatim}
+    \item (Opcional) Crie um ambiente virtual:
+    \begin{verbatim}
+    python -m venv venv
+    venv\Scripts\activate  # Windows
+    source venv/bin/activate  # Linux/Mac
+    \end{verbatim}
+    \item Instale as dependências:
+    \begin{verbatim}
+    pip install -r requirements.txt
+    \end{verbatim}
+    \item Execute o notebook:
+    \begin{verbatim}
+    jupyter notebook
+    \end{verbatim}
+    \item Abra e execute as células do arquivo \texttt{main.ipynb}.
+\end{enumerate}
+
+\section{Resultados dos Experimentos}
+
+Os principais resultados são apresentados em gráficos gerados pelo notebook, incluindo:
+
+\begin{itemize}
+    \item Diferença dos ângulos de barra entre AC e DC.
+    \item Comparação dos fluxos de linha via DC e CTDF (ground, slack, z-tie).
+    \item Variação dos fluxos diante de aumento de carga.
+\end{itemize}
+
+% \begin{figure}[!t]
+% \centering
+% \includegraphics[width=2.5in]{fig1}
+% \caption{Comparação dos ângulos de barra (AC vs DC) para o sistema IEEE 14 barras.}
+% \label{fig_1}
+% \end{figure}
+
+% \begin{figure}[!t]
+% \centering
+% \includegraphics[width=2.5in]{fig2}
+% \caption{Comparação dos fluxos de linha via DC e CTDFs.}
+% \label{fig_2}
+% \end{figure}
+
+Os resultados mostram que os CTDFs fornecem estimativas rápidas e precisas para pequenas perturbações, sendo especialmente úteis para estudos de sensibilidade.
+
+\section{Conclusão}
+A implementação dos CTDFs em Python mostrou-se eficiente para análise de redes elétricas, permitindo estudos rápidos de sensibilidade e contingência. O framework desenvolvido é flexível e pode ser expandido para outros sistemas e métodos.
+
+\section*{Agradecimentos}
+Agradecemos ao corpo docente do programa de pós-graduação e aos colegas pelo apoio e discussões construtivas.
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{1}
+\bibitem{Sauer1981}
+P. W. Sauer, ``On The Formulation of Power Distribution Factors for Linear Load Flow Methods,'' \emph{IEEE Transactions on Power Apparatus and Systems}, vol. PAS-100, no. 2, pp. 764-770, Feb. 1981.
+\end{thebibliography}
+
+\end{document}
