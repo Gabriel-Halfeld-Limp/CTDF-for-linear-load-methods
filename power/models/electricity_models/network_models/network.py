@@ -118,9 +118,10 @@ class Network:
             branch.phase_shift = 0
 
         for bus in self.buses:
-            bus.Sh = 0  
+            if bus.bus_type != 'Slack':
+                bus.Sh = 0  
 
-        self.buses[0].Sh = 0.1    
+        #self.buses[0].Sh = 0.1    
 
     def __repr__(self):
         return f"Network(id={self.id}, name={self.name})"
