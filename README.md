@@ -12,7 +12,7 @@ Os experimentos e gráficos principais estão organizados no notebook [`main.ipy
 
 - `main.ipynb`: Notebook principal com exemplos, gráficos e análises.
 - `requirements.txt`: Lista de dependências Python necessárias.
-- `power/`: Implementação dos modelos elétricos, fluxo de potência e CTDF.
+- `power/`: Implementação dos modelos elétricos, fluxo de potência e CTDF (Montado em Network e elementos calculados em Line).
 - `systems/`: Definição dos sistemas de barras (IEEE14, Sauer6, Sauer11, etc).
 
 ## Instalação
