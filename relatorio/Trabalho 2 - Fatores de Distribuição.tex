@@ -10,12 +10,13 @@
 \usepackage{verbatim}
 \usepackage{graphicx}
 \usepackage{cite}
+\usepackage{float}
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 % updated with editorial comments 8/9/2021
 
 \begin{document}
 
-\title{A Sample Article Using IEEEtran.cls\\ for IEEE Journals and Transactions}
+\title{Formulação dos Índices de Distribuição de Potência para Fluxos de Potência Lineares }
 
 \author{Gabriel H. Limp,~\IEEEmembership{Aluno,~UFJF,}
         Giovani S. Junqueira,~\IEEEmembership{Aluno,~UFJF}%
@@ -27,7 +28,7 @@
 % \thanks{Manuscript received April 19, 2021; revised August 16, 2021.}}
 
 % The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
+\markboth{Trabalho proposto na Disciplina de Análise de Redes do PPEE da UFJF, Junho~2025}%
 {Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
 
 % \IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
@@ -37,11 +38,11 @@
 \maketitle
 
 \begin{abstract}
-TThis study revisits and mathematically formalizes heuristic methods widely used to estimate power flows in electric networks through distribution factors. Based on the classical work by P. W. Sauer (1981), three main formulations are analyzed: (i) current distribution factors, (ii) distribution factors assuming constant voltage at the swing bus, and (iii) distribution factors with an arbitrary ground tie — the latter generalizing the former two. The paper demonstrates that these approaches, although initially empirical, are valid approximations of the exact solution under linear conditions. Independent simulations were conducted to verify the consistency among formulations and to assess the impact of different assumptions on the resulting power flows. Results confirm that distribution factors are an effective tool for contingency analysis, linear dispatch models, and fast operational assessments, providing sufficient accuracy with significant computational efficiency. 
+This study revisits and mathematically formalizes heuristic methods widely used to estimate power flows in electric networks through distribution factors. Based on the classical work by P. W. Sauer (1981), three main formulations are analyzed: (i) current distribution factors, (ii) distribution factors assuming constant voltage at the swing bus, and (iii) distribution factors with an arbitrary ground tie — the latter generalizing the former two. The paper demonstrates that these approaches, although initially empirical, are valid approximations of the exact solution under linear conditions. Independent simulations were conducted to verify the consistency among formulations and to assess the impact of different assumptions on the resulting power flows. Results confirm that distribution factors are an effective tool for contingency analysis, linear dispatch models, and fast operational assessments, providing sufficient accuracy with significant computational efficiency. 
 \end{abstract}
 
 \begin{IEEEkeywords}
-Article submission, IEEE, IEEEtran, journal, \LaTeX, paper, template, typesetting. % REVISAR
+Power Flow, Power Systems, Linear Load Flow. % REVISAR
 \end{IEEEkeywords}
 
 \section{Introdução}
@@ -218,458 +219,120 @@ Nessa equação:
 Ao variar o valor de \( z_{\text{tie}} \), é possível simular diferentes regimes operativos. Quando \( z_{\text{tie}} \rightarrow \infty \), a equação se reduz ao caso de tensão constante na barra swing (subseção B); quando \( z_{\text{tie}} \rightarrow 0 \), aproxima-se da formulação não referenciada (subseção A). Essa flexibilidade torna a formulação com ligação arbitrária ao terra uma generalização dos modelos anteriores, permitindo maior controle sobre a condição de referência do sistema.
 
 
-\section{The Design, Intent, and \\ Limitations of the Templates}
-The templates are intended to {\bf{approximate the final look and page length of the articles/papers}}. {\bf{They are NOT intended to be the final produced work that is displayed in print or on IEEEXplore\textsuperscript{\textregistered}}}. They will help to give the authors an approximation of the number of pages that will be in the final version. The structure of the \LaTeX\ files, as designed, enable easy conversion to XML for the composition systems used by the IEEE. The XML files are used to produce the final print/IEEEXplore pdf and then converted to HTML for IEEEXplore.
+\section{Estudos de caso}
+Nesta seção, foram discutidos os estudos de caso realizados para validar e comparar as diferentes formulações dos fatores de distribuição de corrente (CTDFs) conforme \cite{ref1}. Os experimentos foram conduzidos em sistemas teste de 3 e 6 barras, utilizando implementações próprias em Python para os métodos de fluxo de potência AC, DC e para o cálculo dos CTDFs nas referências ground, slack e z-tie. Também foi avaliado o impacto de elementos shunt e diferentes cenários de perturbação de carga e geração. Os dados dos sistemas estão nos apêndices A e B.
 
-\section{Where to Get \LaTeX \ Help --- User Groups}
-The following online groups are helpful to beginning and experienced \LaTeX\ users. A search through their archives can provide many answers to common questions.
-\begin{list}{}{}
-\item{\url{http://www.latex-community.org/}} 
-\item{\url{https://tex.stackexchange.com/} }
-\end{list}
+\subsection{Sistema de 3 Barras}
+Para o sistema de 3 barras, inicialmente o sistema foi linearizado, a fim de validar a afirmação de Sauer de que os fatores de distribuição produzem os mesmos fluxos em um sistema linear, portanto foram feitos os seguintes passos:
+\begin{enumerate}
+  \item Linearização do problema (resistências de linha e admitâncias shunt iguais a zero e tensões nodais iguais a 1 pu);
+  \item Cálculo dos fluxos de potência ativa através do Fluxo de Potência DC;
+  \item Cálculo dos fluxos de potência ativa com os fatores de distribuição utilizando a \eqref{eq:corrente_incremental};
+  \item Comparação dos resultados
+\end{enumerate}
+É importante ressaltar que para obter a matriz $Z_{barra}$, a matriz de admitâncias $Y_{barra}$ foi calculada e depois invertida. Faz-se necessário a inclusão de uma admitância shunt qualquer conectada à barra de referência para que $Y_{barra}$ deixe de ser singular. 
 
-\section{Other Resources}
-See \cite{ref1} for resources on formatting math into text and additional help in working with \LaTeX .
+Os resultados, demonstrados na figura \ref{fig:fluxo_3bus_dc} confirmaram que os fluxos obtidos foram de fato idênticos aos fluxos calculados com a formulacão DC. Outro detalhe é que pode-se calcular os fluxos diretamente, sem precisar de um caso base, pois como o sistema é linear, pode-se considerar o caso base com todas as potências iguais a zero.
 
-\section{Text}
-For some of the remainer of this sample we will use dummy text to fill out paragraphs rather than use live text that may violate a copyright.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\linewidth]{../images/fluxos_3bus_DC.png}
+\caption{Fluxos de potência cálculados por fatores de distribuição e fluxo DC}
+\label{fig:fluxo_3bus_dc}
+\end{figure}
 
-Itam, que ipiti sum dem velit la sum et dionet quatibus apitet voloritet audam, qui aliciant voloreicid quaspe volorem ut maximusandit faccum conemporerum aut ellatur, nobis arcimus.
-Fugit odi ut pliquia incitium latum que cusapere perit molupta eaquaeria quod ut optatem poreiur? Quiaerr ovitior suntiant litio bearciur?
+Foram avaliadas as performances dos índices de distribuição com a rede em seu formato não linear, ou seja, agora com resistências nas linhas de transmissão. Para comparar com fluxos exatos AC e fluxos DC, consideramos dois casos:
+\begin{enumerate}
+  \item Aumento de 10\% de carga na barra 3;
+  \item Aumento de 10\% de carga na barra 3 e 10\% de geração na barra 2;
+\end{enumerate} 
 
-Onseque sequaes rectur autate minullore nusae nestiberum, sum voluptatio. Et ratem sequiam quaspername nos rem repudandae volum consequis nos eium aut as molupta tectum ulparumquam ut maximillesti consequas quas inctia cum volectinusa porrum unt eius cusaest exeritatur? Nias es enist fugit pa vollum reium essusam nist et pa aceaqui quo elibusdandis deligendus que nullaci lloreri bla que sa coreriam explacc atiumquos simolorpore, non prehendunt lam que occum si aut aut maximus eliaeruntia dia sequiamenime natem sendae ipidemp orehend uciisi omnienetus most verum, ommolendi omnimus, est, veni aut ipsa volendelist mo conserum volores estisciis recessi nveles ut poressitatur sitiis ex endi diti volum dolupta aut aut odi as eatquo cullabo remquis toreptum et des accus dolende pores sequas dolores tinust quas expel moditae ne sum quiatis nis endipie nihilis etum fugiae audi dia quiasit quibus.
-\IEEEpubidadjcol
-Ibus el et quatemo luptatque doluptaest et pe volent rem ipidusa eribus utem venimolorae dera qui acea quam etur aceruptat.
-Gias anis doluptaspic tem et aliquis alique inctiuntiur?
+As figuras \ref{fig:fluxo_3bus_carga10} e \ref{fig:fluxo_3bus_cargaeger10} correspondem aos dois casos, respectivamente.
 
-Sedigent, si aligend elibuscid ut et ium volo tem eictore pellore ritatus ut ut ullatus in con con pere nos ab ium di tem aliqui od magnit repta volectur suntio. Nam isquiante doluptis essit, ut eos suntionsecto debitiur sum ea ipitiis adipit, oditiore, a dolorerempos aut harum ius, atquat.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\linewidth]{../images/3bus_carga10.png}
+\caption{Variação de fluxos com aumento de 10\% na barra $PQ$}
+\label{fig:fluxo_3bus_carga10}
+\end{figure}
 
-Rum rem ditinti sciendunti volupiciendi sequiae nonsect oreniatur, volores sition ressimil inus solut ea volum harumqui to see\eqref{deqn_ex1a} mint aut quat eos explis ad quodi debis deliqui aspel earcius.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\linewidth]{../images/3_bus_cargaegeracao10.png}
+\caption{Variação de fluxos com aumento de 10\% de carga na barra $PQ$ e 10\% de geração na barra $PV$}
+\label{fig:fluxo_3bus_cargaeger10}
+\end{figure}
+
+Pode-se perceber que mesmo com a inclusão de resistências no sistema, as variações de fluxos obtidas através dos índices CTDFs foram idênticas às variações de fluxo obtidas através do fluxo DC.
+
+De acordo com Sauer \cite{ref1}, a razão entre as admitâncias shunt e as reatâncias da linha podem impactar na performance dos índices, distintos dos fluxos DC. Para validar isso, foram adicionados shunts em todas as linhas com razão $r = b/x$ de 5\%, 20\% e 50\% e novamente a comparação entre os métodos foi feita em um caso de aumento de 10\% de carga na barra 3. foi calculado o erro médio dos desvios de fluxo em relação aos fluxos exatos AC, dados pelas equações \ref{eq:erro_from}, \ref{eq:erro_to} e \ref{eq:erro_medio}. Os resultados estão descritos na Tabela~\ref{tab:erro_3bus_bx}.
 
 \begin{equation}
-\label{deqn_ex1a}
-x = \sum_{i=0}^{n} 2{i} Q.
+\text{Erro}_{\text{from}} = \frac{1}{n} \sum_{i=1}^{n} \left| \frac{\Delta F^{\text{método}}_i - \Delta F^{\text{AC, from}}_i}{\Delta F^{\text{AC, from}}_i} \right| \times 100\%
+\label{eq:erro_from}
 \end{equation}
 
-Alis nime volorempera perferi sitio denim repudae pre ducilit atatet volecte ssimillorae dolore, ut pel ipsa nonsequiam in re nus maiost et que dolor sunt eturita tibusanis eatent a aut et dio blaudit reptibu scipitem liquia consequodi od unto ipsae. Et enitia vel et experferum quiat harum sa net faccae dolut voloria nem. Bus ut labo. Ita eum repraer rovitia samendit aut et volupta tecupti busant omni quiae porro que nossimodic temquis anto blacita conse nis am, que ereperum eumquam quaescil imenisci quae magnimos recus ilibeaque cum etum iliate prae parumquatemo blaceaquiam quundia dit apienditem rerit re eici quaes eos sinvers pelecabo. Namendignis as exerupit aut magnim ium illabor roratecte plic tem res apiscipsam et vernat untur a deliquaest que non cus eat ea dolupiducim fugiam volum hil ius dolo eaquis sitis aut landesto quo corerest et auditaquas ditae voloribus, qui optaspis exero cusa am, ut plibus.
+\begin{equation}
+\text{Erro}_{\text{to}} = \frac{1}{n} \sum_{i=1}^{n} \left| \frac{\Delta F^{\text{método}}_i - \Delta F^{\text{AC, to}}_i}{\Delta F^{\text{AC, to}}_i} \right| \times 100\%
+\label{eq:erro_to}
+\end{equation}
 
+\begin{equation}
+\text{Erro}_{\text{médio}} = \frac{1}{2} \left( \text{Erro}_{\text{from}} + \text{Erro}_{\text{to}} \right)
+\label{eq:erro_medio}
+\end{equation}
 
-\section{Some Common Elements}
-\subsection{Sections and Subsections}
-Enumeration of section headings is desirable, but not required. When numbered, please be consistent throughout the article, that is, all headings and all levels of section headings in the article should be enumerated. Primary headings are designated with Roman numerals, secondary with capital letters, tertiary with Arabic numbers; and quaternary with lowercase letters. Reference and Acknowledgment headings are unlike all other section headings in text. They are never enumerated. They are simply primary headings without labels, regardless of whether the other headings in the article are enumerated. 
-
-\subsection{Citations to the Bibliography}
-The coding for the citations is made with the \LaTeX\ $\backslash${\tt{cite}} command. 
-This will display as: see \cite{ref1}.
-
-For multiple citations code as follows: {\tt{$\backslash$cite\{ref1,ref2,ref3\}}}
- which will produce \cite{ref1}. For reference ranges that are not consecutive code as {\tt{$\backslash$cite\{ref1}} which will produce  \cite{ref1}
-
-\subsection{Lists}
-In this section, we will consider three types of lists: simple unnumbered, numbered, and bulleted. There have been many options added to IEEEtran to enhance the creation of lists. If your lists are more complex than those shown below, please refer to the original ``IEEEtran\_HOWTO.pdf'' for additional options.\\
-
-\subsubsection*{\bf A plain  unnumbered list}
-\begin{list}{}{}
-\item{bare\_jrnl.tex}
-\item{bare\_conf.tex}
-\item{bare\_jrnl\_compsoc.tex}
-\item{bare\_conf\_compsoc.tex}
-\item{bare\_jrnl\_comsoc.tex}
-\end{list}
-
-\subsubsection*{\bf A simple numbered list}
-\begin{enumerate}
-\item{bare\_jrnl.tex}
-\item{bare\_conf.tex}
-\item{bare\_jrnl\_compsoc.tex}
-\item{bare\_conf\_compsoc.tex}
-\item{bare\_jrnl\_comsoc.tex}
-\end{enumerate}
-
-\subsubsection*{\bf A simple bulleted list}
-\begin{itemize}
-\item{bare\_jrnl.tex}
-\item{bare\_conf.tex}
-\item{bare\_jrnl\_compsoc.tex}
-\item{bare\_conf\_compsoc.tex}
-\item{bare\_jrnl\_comsoc.tex}
-\end{itemize}
-
-
-
-
-
-\subsection{Figures}
-Fig. 1 is an example of a floating figure using the graphicx package.
- Note that $\backslash${\tt{label}} must occur AFTER (or within) $\backslash${\tt{caption}}.
- For figures, $\backslash${\tt{caption}} should occur after the $\backslash${\tt{includegraphics}}.
-
-
-
-Fig. 2(a) and 2(b) is an example of a double column floating figure using two subfigures.
- (The subfig.sty package must be loaded for this to work.)
- The subfigure $\backslash${\tt{label}} commands are set within each subfloat command,
- and the $\backslash${\tt{label}} for the overall figure must come after $\backslash${\tt{caption}}.
- $\backslash${\tt{hfil}} is used as a separator to get equal spacing.
- The combined width of all the parts of the figure should do not exceed the text width or a line break will occur.
-%
-
-Note that often IEEE papers with multi-part figures do not place the labels within the image itself (using the optional argument to $\backslash${\tt{subfloat}}[]), but instead will
- reference/describe all of them (a), (b), etc., within the main caption.
- Be aware that for subfig.sty to generate the (a), (b), etc., subfigure
- labels, the optional argument to $\backslash${\tt{subfloat}} must be present. If a
- subcaption is not desired, leave its contents blank,
- e.g.,$\backslash${\tt{subfloat}}[].
-
-
- 
-
-\section{Tables}
-Note that, for IEEE-style tables, the
- $\backslash${\tt{caption}} command should come BEFORE the table. Table captions use title case. Articles (a, an, the), coordinating conjunctions (and, but, for, or, nor), and most short prepositions are lowercase unless they are the first or last word. Table text will default to $\backslash${\tt{footnotesize}} as
- the IEEE normally uses this smaller font for tables.
- The $\backslash${\tt{label}} must come after $\backslash${\tt{caption}} as always.
- 
-\begin{table}[!t]
-\caption{An Example of a Table\label{tab:table1}}
+\begin{table}[!ht]
 \centering
-\begin{tabular}{|c||c|}
+\caption{Erro percentual médio dos métodos para diferentes razões $r = b/x$ no sistema 3 barras}
+\label{tab:erro_3bus_bx}
+\begin{tabular}{l|ccc}
 \hline
-One & Two\\
+Método & $r=0.05$ & $r=0.20$ & $r=0.50$ \\
 \hline
-Three & Four\\
+DC                & 12.01 & 13.48 & 13.31 \\
+$CTDF_{ground}$   & 15.55 & 24.52 & 30.25 \\
+$CTDF_{slack}$    & 10.97 & 10.28 & 6.90 \\
+$CTDF_{ztie}$     & 16.26 & 28.71 & 37.26 \\
 \hline
 \end{tabular}
 \end{table}
 
-\section{Algorithms}
-Algorithms should be numbered and include a short title. They are set off from the text with rules above and below the title and after the last line.
+Pode-se perceber que, para este sistema, a formulação via método $CTDF_{slack}$ produziu resultados com menores erros médios nos 3 casos analisados.
 
-\begin{algorithm}[H]
-\caption{Weighted Tanimoto ELM.}\label{alg:alg1}
-\begin{algorithmic}
-\STATE 
-\STATE {\textsc{TRAIN}}$(\mathbf{X} \mathbf{T})$
-\STATE \hspace{0.5cm}$ \textbf{select randomly } W \subset \mathbf{X}  $
-\STATE \hspace{0.5cm}$ N_\mathbf{t} \gets | \{ i : \mathbf{t}_i = \mathbf{t} \} | $ \textbf{ for } $ \mathbf{t}= -1,+1 $
-\STATE \hspace{0.5cm}$ B_i \gets \sqrt{ \textsc{max}(N_{-1},N_{+1}) / N_{\mathbf{t}_i} } $ \textbf{ for } $ i = 1,...,N $
-\STATE \hspace{0.5cm}$ \hat{\mathbf{H}} \gets  B \cdot (\mathbf{X}^T\textbf{W})/( \mathbb{1}\mathbf{X} + \mathbb{1}\textbf{W} - \mathbf{X}^T\textbf{W} ) $
-\STATE \hspace{0.5cm}$ \beta \gets \left ( I/C + \hat{\mathbf{H}}^T\hat{\mathbf{H}} \right )^{-1}(\hat{\mathbf{H}}^T B\cdot \mathbf{T})  $
-\STATE \hspace{0.5cm}\textbf{return}  $\textbf{W},  \beta $
-\STATE 
-\STATE {\textsc{PREDICT}}$(\mathbf{X} )$
-\STATE \hspace{0.5cm}$ \mathbf{H} \gets  (\mathbf{X}^T\textbf{W} )/( \mathbb{1}\mathbf{X}  + \mathbb{1}\textbf{W}- \mathbf{X}^T\textbf{W}  ) $
-\STATE \hspace{0.5cm}\textbf{return}  $\textsc{sign}( \mathbf{H} \beta )$
-\end{algorithmic}
-\label{alg1}
-\end{algorithm}
 
-Que sunt eum lam eos si dic to estist, culluptium quid qui nestrum nobis reiumquiatur minimus minctem. Ro moluptat fuga. Itatquiam ut laborpo rersped exceres vollandi repudaerem. Ulparci sunt, qui doluptaquis sumquia ndestiu sapient iorepella sunti veribus. Ro moluptat fuga. Itatquiam ut laborpo rersped exceres vollandi repudaerem. 
-\section{Mathematical Typography \\ and Why It Matters}
+\subsection{6 barras}
+Para o sistema de 6 barras descrito na figura REFERENCIAR, foi aplicado um aumento de 10\% em todas as cargas e efetuado os mesmos cálculos de $\Delta P_{ij}$ para todos os métodos. Os erros médios estão descritos na tabela \ref{tab:erro_6bus}.
 
-Typographical conventions for mathematical formulas have been developed to {\bf provide uniformity and clarity of presentation across mathematical texts}. This enables the readers of those texts to both understand the author's ideas and to grasp new concepts quickly. While software such as \LaTeX \ and MathType\textsuperscript{\textregistered} can produce aesthetically pleasing math when used properly, it is also very easy to misuse the software, potentially resulting in incorrect math display.
+\begin{table}[!ht]
+\centering
+\caption{Erro percentual médio dos métodos para o sistema 3 barras}
+\label{tab:erro_6bus}
+\begin{tabular}{l|c}
+\hline
+Método            & Erro percentual médio (\%) \\
+\hline
+DC                & 59.69 \\
+$CTDF_{ground}$   & 106.54 \\
+$CTDF_{slack}$    & 52.39 \\
+$CTDF_{ztie}$     & 85.46 \\
+\hline
+\end{tabular}
+\end{table}
 
-IEEE aims to provide authors with the proper guidance on mathematical typesetting style and assist them in writing the best possible article. As such, IEEE has assembled a set of examples of good and bad mathematical typesetting 
-
-Further examples can be found at \url{http://journals.ieeeauthorcenter.ieee.org/wp-content/uploads/sites/7/IEEE-Math-Typesetting-Guide-for-LaTeX-Users.pdf}
-
-\subsection{Display Equations}
-The simple display equation example shown below uses the ``equation'' environment. To number the equations, use the $\backslash${\tt{label}} macro to create an identifier for the equation. LaTeX will automatically number the equation for you.
-\begin{equation}
-\label{deqn_ex1}
-x = \sum_{i=0}^{n} 2{i} Q.
-\end{equation}
-
-\noindent is coded as follows:
-\begin{verbatim}
-\begin{equation}
-\label{deqn_ex1}
-x = \sum_{i=0}^{n} 2{i} Q.
-\end{equation}
-\end{verbatim}
-
-To reference this equation in the text use the $\backslash${\tt{ref}} macro. 
-Please see (\ref{deqn_ex1})\\
-\noindent is coded as follows:
-\begin{verbatim}
-Please see (\ref{deqn_ex1})\end{verbatim}
-
-\subsection{Equation Numbering}
-{\bf{Consecutive Numbering:}} Equations within an article are numbered consecutively from the beginning of the
-article to the end, i.e., (1), (2), (3), (4), (5), etc. Do not use roman numerals or section numbers for equation numbering.
-
-\noindent {\bf{Appendix Equations:}} The continuation of consecutively numbered equations is best in the Appendix, but numbering
- as (A1), (A2), etc., is permissible.\\
-
-\noindent {\bf{Hyphens and Periods}}: Hyphens and periods should not be used in equation numbers, i.e., use (1a) rather than
-(1-a) and (2a) rather than (2.a) for subequations. This should be consistent throughout the article.
-
-\subsection{Multi-Line Equations and Alignment}
-Here we show several examples of multi-line equations and proper alignments.
-
-\noindent {\bf{A single equation that must break over multiple lines due to length with no specific alignment.}}
-\begin{multline}
-\text{The first line of this example}\\
-\text{The second line of this example}\\
-\text{The third line of this example}
-\end{multline}
-
-\noindent is coded as:
-\begin{verbatim}
-\begin{multline}
-\text{The first line of this example}\\
-\text{The second line of this example}\\
-\text{The third line of this example}
-\end{multline}
-\end{verbatim}
-
-\noindent {\bf{A single equation with multiple lines aligned at the = signs}}
-\begin{align}
-a &= c+d \\
-b &= e+f
-\end{align}
-\noindent is coded as:
-\begin{verbatim}
-\begin{align}
-a &= c+d \\
-b &= e+f
-\end{align}
-\end{verbatim}
-
-The {\tt{align}} environment can align on multiple  points as shown in the following example:
-\begin{align}
-x &= y & X & =Y & a &=bc\\
-x' &= y' & X' &=Y' &a' &=bz
-\end{align}
-\noindent is coded as:
-\begin{verbatim}
-\begin{align}
-x &= y & X & =Y & a &=bc\\
-x' &= y' & X' &=Y' &a' &=bz
-\end{align}
-\end{verbatim}
+Os resultados mostram uma grande erro médio. Mas ainda assim, a formulação $CTDF_{slack}$, produziu erros inferiores à aproximação DC do sistema.
 
 
 
 
+\section{Conclusões}
+Neste trabalho, revisitou-se a formulação dos fatores de distribuição de corrente (CTDFs) para métodos lineares de fluxo de potência, conforme proposto por Sauer, e avaliou-se seu desempenho em sistemas teste de 3 e 6 barras. Foram implementados e comparados os métodos AC, DC e as diferentes variantes dos CTDFs (ground, slack e z-tie), considerando cenários com e sem elementos shunt, bem como diferentes políticas de despacho.
 
-\subsection{Subnumbering}
-The amsmath package provides a {\tt{subequations}} environment to facilitate subnumbering. An example:
+Os resultados confirmam que, em sistemas linearizados, os CTDFs reproduzem exatamente o fluxo DC, validando a equivalência teórica entre as abordagens. Para sistemas não lineares ou com a presença de elementos shunt, observou-se que o erro dos métodos lineares aumenta, mas ainda assim as aproximações são satisfatórias para aplicações de análise rápida, planejamento e estudos de sensibilidade. Destaca-se que a escolha da referência dos CTDFs (especialmente a slack) pode impactar significativamente a precisão dos resultados, sendo importante adequar a formulação ao contexto do sistema analisado.
 
-\begin{subequations}\label{eq:2}
-\begin{align}
-f&=g \label{eq:2A}\\
-f' &=g' \label{eq:2B}\\
-\mathcal{L}f &= \mathcal{L}g \label{eq:2c}
-\end{align}
-\end{subequations}
-
-\noindent is coded as:
-\begin{verbatim}
-\begin{subequations}\label{eq:2}
-\begin{align}
-f&=g \label{eq:2A}\\
-f' &=g' \label{eq:2B}\\
-\mathcal{L}f &= \mathcal{L}g \label{eq:2c}
-\end{align}
-\end{subequations}
-
-\end{verbatim}
-
-\subsection{Matrices}
-There are several useful matrix environments that can save you some keystrokes. See the example coding below and the output.
-
-\noindent {\bf{A simple matrix:}}
-\begin{equation}
-\begin{matrix}  0 &  1 \\ 
-1 &  0 \end{matrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{matrix}  0 &  1 \\ 
-1 &  0 \end{matrix}
-\end{equation}
-\end{verbatim}
-
-\noindent {\bf{A matrix with parenthesis}}
-\begin{equation}
-\begin{pmatrix} 0 & -i \\
- i &  0 \end{pmatrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{pmatrix} 0 & -i \\
- i &  0 \end{pmatrix}
-\end{equation}
-\end{verbatim}
-
-\noindent {\bf{A matrix with square brackets}}
-\begin{equation}
-\begin{bmatrix} 0 & -1 \\ 
-1 &  0 \end{bmatrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{bmatrix} 0 & -1 \\ 
-1 &  0 \end{bmatrix}
-\end{equation}
-\end{verbatim}
-
-\noindent {\bf{A matrix with curly braces}}
-\begin{equation}
-\begin{Bmatrix} 1 &  0 \\ 
-0 & -1 \end{Bmatrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{Bmatrix} 1 &  0 \\ 
-0 & -1 \end{Bmatrix}
-\end{equation}\end{verbatim}
-
-\noindent {\bf{A matrix with single verticals}}
-\begin{equation}
-\begin{vmatrix} a &  b \\ 
-c &  d \end{vmatrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{vmatrix} a &  b \\ 
-c &  d \end{vmatrix}
-\end{equation}\end{verbatim}
-
-\noindent {\bf{A matrix with double verticals}}
-\begin{equation}
-\begin{Vmatrix} i &  0 \\ 
-0 & -i \end{Vmatrix}
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\begin{Vmatrix} i &  0 \\ 
-0 & -i \end{Vmatrix}
-\end{equation}\end{verbatim}
-
-\subsection{Arrays}
-The {\tt{array}} environment allows you some options for matrix-like equations. You will have to manually key the fences, but there are other options for alignment of the columns and for setting horizontal and vertical rules. The argument to {\tt{array}} controls alignment and placement of vertical rules.
-
-A simple array
-\begin{equation}
-\left(
-\begin{array}{cccc}
-a+b+c & uv & x-y & 27\\
-a+b & u+v & z & 134
-\end{array}\right)
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\left(
-\begin{array}{cccc}
-a+b+c & uv & x-y & 27\\
-a+b & u+v & z & 134
-\end{array} \right)
-\end{equation}
-\end{verbatim}
-
-A slight variation on this to better align the numbers in the last column
-\begin{equation}
-\left(
-\begin{array}{cccr}
-a+b+c & uv & x-y & 27\\
-a+b & u+v & z & 134
-\end{array}\right)
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\left(
-\begin{array}{cccr}
-a+b+c & uv & x-y & 27\\
-a+b & u+v & z & 134
-\end{array} \right)
-\end{equation}
-\end{verbatim}
-
-An array with vertical and horizontal rules
-\begin{equation}
-\left( \begin{array}{c|c|c|r}
-a+b+c & uv & x-y & 27\\ \hline
-a+b & u+v & z & 134
-\end{array}\right)
-\end{equation}
-is coded as:
-\begin{verbatim}
-\begin{equation}
-\left(
-\begin{array}{c|c|c|r}
-a+b+c & uv & x-y & 27\\
-a+b & u+v & z & 134
-\end{array} \right)
-\end{equation}
-\end{verbatim}
-Note the argument now has the pipe "$\vert$" included to indicate the placement of the vertical rules.
-
-
-\subsection{Cases Structures}
-Many times cases can be miscoded using the wrong environment, i.e., {\tt{array}}. Using the {\tt{cases}} environment will save keystrokes (from not having to type the $\backslash${\tt{left}}$\backslash${\tt{lbrace}}) and automatically provide the correct column alignment.
-\begin{equation*}
-{z_m(t)} = \begin{cases}
-1,&{\text{if}}\ {\beta }_m(t) \\ 
-{0,}&{\text{otherwise.}} 
-\end{cases}
-\end{equation*}
-\noindent is coded as follows:
-\begin{verbatim}
-\begin{equation*}
-{z_m(t)} = 
-\begin{cases}
-1,&{\text{if}}\ {\beta }_m(t),\\ 
-{0,}&{\text{otherwise.}} 
-\end{cases}
-\end{equation*}
-\end{verbatim}
-\noindent Note that the ``\&'' is used to mark the tabular alignment. This is important to get  proper column alignment. Do not use $\backslash${\tt{quad}} or other fixed spaces to try and align the columns. Also, note the use of the $\backslash${\tt{text}} macro for text elements such as ``if'' and ``otherwise.''
-
-\subsection{Function Formatting in Equations}
-Often, there is an easy way to properly format most common functions. Use of the $\backslash$ in front of the function name will in most cases, provide the correct formatting. When this does not work, the following example provides a solution using the $\backslash${\tt{text}} macro:
-
-\begin{equation*} 
-  d_{R}^{KM} = \underset {d_{l}^{KM}} {\text{arg min}} \{ d_{1}^{KM},\ldots,d_{6}^{KM}\}.
-\end{equation*}
-
-\noindent is coded as follows:
-\begin{verbatim}
-\begin{equation*} 
- d_{R}^{KM} = \underset {d_{l}^{KM}} 
- {\text{arg min}} \{ d_{1}^{KM},
- \ldots,d_{6}^{KM}\}.
-\end{equation*}
-\end{verbatim}
-
-\subsection{ Text Acronyms Inside Equations}
-This example shows where the acronym ``MSE" is coded using $\backslash${\tt{text\{\}}} to match how it appears in the text.
-
-\begin{equation*}
- \text{MSE} = \frac {1}{n}\sum _{i=1}^{n}(Y_{i} - \hat {Y_{i}})^{2}
-\end{equation*}
-
-\begin{verbatim}
-\begin{equation*}
- \text{MSE} = \frac {1}{n}\sum _{i=1}^{n}
-(Y_{i} - \hat {Y_{i}})^{2}
-\end{equation*}
-\end{verbatim}
-
-\section{Conclusion}
-The conclusion goes here.
-
-
-\section*{Acknowledgments}
+Em síntese, os fatores de distribuição de corrente se mostraram ferramentas eficientes e versáteis para estimativa de fluxos em redes elétricas, proporcionando rapidez computacional e boa precisão em uma ampla gama de situações práticas.  Como trabalhos futuros, sugere-se a aplicação dos CTDFs em sistemas reais de maior porte, bem como a investigação de extensões para considerar perdas e elementos shunt de forma mais precisa.
+Uma outra possível oportunidade de pesquisa é a utilização dos índices CTDFs para cálculo de fluxos de potência ativa e reativa nas linhas em problemas de otimização, podendo ser mais realista que um modelo DC, com equações lineares, e sem variáveis de ângulo e módulo de tensões nodais.
+\section*{Agradecimentos}
 Agradecemos ao professor João Alberto Passos Filho, por disponibilizar o material de suporte, e incentivar o desenvolvimento do artigo. 
 
 
@@ -712,30 +375,6 @@ Agradecemos ao professor João Alberto Passos Filho, por disponibilizar o materi
 \bibitem{ref1}
 P. W. Sauer, ``On the formulation of power distribution factors for linear load flow methods,'' \textit{IEEE Trans. Power Appar. Syst.}, vol. PAS-100, no. 2, pp. 764--770, Feb. 1981. DOI: 10.1109/TPAS.1981.316422.
 
-% \bibitem{ref2}
-% T. W. Chaundy, P. R. Barrett and C. Batey, {\it{The Printing of Mathematics}}. London, U.K., Oxford Univ. Press, 1954.
-
-% \bibitem{ref3}
-% F. Mittelbach and M. Goossens, {\it{The \LaTeX Companion}}, 2nd ed. Boston, MA, USA: Pearson, 2004.
-
-% \bibitem{ref4}
-% G. Gr\"atzer, {\it{More Math Into LaTeX}}, New York, NY, USA: Springer, 2007.
-
-% \bibitem{ref5}M. Letourneau and J. W. Sharp, {\it{AMS-StyleGuide-online.pdf,}} American Mathematical Society, Providence, RI, USA, [Online]. Available: http://www.ams.org/arc/styleguide/index.html
-
-% \bibitem{ref6}
-% H. Sira-Ramirez, ``On the sliding mode control of nonlinear systems,'' \textit{Syst. Control Lett.}, vol. 19, pp. 303--312, 1992.
-
-% \bibitem{ref7}
-% A. Levant, ``Exact differentiation of signals with unbounded higher derivatives,''  in \textit{Proc. 45th IEEE Conf. Decis.
-% Control}, San Diego, CA, USA, 2006, pp. 5585--5590. DOI: 10.1109/CDC.2006.377165.
-
-% \bibitem{ref8}
-% M. Fliess, C. Join, and H. Sira-Ramirez, ``Non-linear estimation is easy,'' \textit{Int. J. Model., Ident. Control}, vol. 4, no. 1, pp. 12--27, 2008.
-
-% \bibitem{ref9}
-% R. Ortega, A. Astolfi, G. Bastin, and H. Rodriguez, ``Stabilization of food-chain systems using a port-controlled Hamiltonian description,'' in \textit{Proc. Amer. Control Conf.}, Chicago, IL, USA,
-% 2000, pp. 2245--2249.
 
 \end{thebibliography}
 
@@ -748,10 +387,103 @@ P. W. Sauer, ``On the formulation of power distribution factors for linear load 
 Possui graduação em Engenharia Mecânica pela EESC-USP, pós-graduação em Engenharia de Manutenção pela UNITINS e MBA Executivo em Administração do Setor Elétrico pela FGV. Atua há mais de 23 anos em usinas hidrelétricas no setor elétrico brasileiro. Atualmente é aluno de mestrado em Engenharia Elétrica de Potência pela Universidade Federal de Juiz de Fora, com foco em métodos de otimização e confiabilidade de sistemas elétricos.
 \end{IEEEbiography}
 
+\begin{IEEEbiography}[{\vspace{-1mm}\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{../images/gabriel.jpg}}]{Gabriel Halfeld Limp de Carvalho}
+É engenheiro eletricista formado pela Universidade Federal de Juiz de Fora (UFJF). Participou de projetos de extensão com foco em análise de fluxos de potência utilizando fractais de Newton. Atualmente, é mestrando em Engenharia Elétrica na UFJF, com atuação nas áreas de otimização de sistemas elétricos de potência como despacho econômico, mercado de energia e confiabilidade da operação.
 
+
+\end{IEEEbiography}
 
 
 \vfill
+\clearpage
+\appendix
+\section{Dados e Imagens dos Sistemas de 3 e 6 Barras}
+
+\subsection{Sistema de 3 Barras}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\textwidth]{../images/3_bus.png}
+  \caption{Diagrama do Sistema de 3 Barras}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\caption{Dados das barras do Sistema de 3 Barras}
+\label{tab:3bus_barras}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+Barra & Tipo  & $V$ (pu) & $\theta$ (rad) & $P_{G}$ (pu) & $P_{C}$ (pu) \\
+\hline
+1 & Slack & 1.00 & 0.00 & --   & --   \\
+2 & PV    & 1.00 & 0.00 & 0.5  & --   \\
+3 & PQ    & 1.00 & 0.00 & --   & 1.0  \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{1em}
+
+\begin{table}[h!]
+\centering
+\caption{Dados das linhas do Sistema de 3 Barras}
+\label{tab:3bus_linhas}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+Linha & De & Para & $r$ (pu) & $x$ (pu) & $b/2$ (pu) \\
+\hline
+1 & 1 & 2 & 0.1 & 0.5 & 0 \\
+2 & 1 & 3 & 0.1 & 0.5 & 0 \\
+3 & 2 & 3 & 0.1 & 0.5 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\clearpage
+\subsection{Sistema de 6 Barras}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\textwidth]{../images/6bus.png}
+  \caption{Diagrama do Sistema de 6 Barras}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\caption{Dados das barras do Sistema de 6 Barras de Sauer}
+\label{tab:sauer6bus_barras}
+\begin{tabular}{c|c|c|c|c|c|c}
+\hline
+Barra & Tipo  & $V$ (pu) & $\theta$ (rad) & $P_{G}$ (pu) & $P_{C}$ (pu) & $Q_{C}$ (pu) \\
+\hline
+1 & Slack & 1.05 & 0.00 & --    & --    & --    \\
+2 & PV    & 1.10 & 0.00 & 0.50  & --    & --    \\
+3 & PQ    & 1.00 & 0.00 & --    & 0.55  & 0.13  \\
+4 & PQ    & 1.00 & 0.00 & --    & --    & --    \\
+5 & PQ    & 1.00 & 0.00 & --    & 0.30  & 0.18  \\
+6 & PQ    & 1.00 & 0.00 & --    & 0.50  & 0.05  \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Dados das linhas do Sistema de 6 Barras de Sauer}
+\label{tab:sauer6bus_linhas}
+\begin{tabular}{c|c|c|c|c|c|c|c}
+\hline
+Linha & De & Para & $r$ (pu) & $x$ (pu) & $b/2$ (pu) & Tap \\
+\hline
+1 & 1 & 4 & 0.080 & 0.370 & 0.00014 & 1.00 \\
+2 & 1 & 6 & 0.123 & 0.518 & 0.00021 & 1.00 \\
+3 & 2 & 3 & 0.723 & 1.050 & 0.00000 & 1.00 \\
+4 & 2 & 5 & 0.282 & 0.640 & 0.00000 & 1.00 \\
+5 & 4 & 6 & 0.097 & 0.407 & 0.00015 & 1.00 \\
+6 & 4 & 3 & 0.000 & 0.266 & 0.00000 & 1.025 \\
+7 & 4 & 3 & 0.000 & 0.266 & 0.00000 & 1.025 \\
+8 & 6 & 5 & 0.000 & 0.428 & 0.00000 & 1.10 \\
+9 & 6 & 5 & 0.000 & 1.000 & 0.00000 & 1.10 \\
+\hline
+\end{tabular}
+\end{table}
 
 \end{document}
 
